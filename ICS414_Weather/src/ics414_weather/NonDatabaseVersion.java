@@ -31,12 +31,14 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Kara
  */
-public class ICS414_Weather {
+public class NonDatabaseVersion {
     public static int index = 0;
+    public static int countOutside = 0;
+    public static int[] values = new int[92];
     
     public static void main(String[] args) throws MalformedURLException, IOException, SQLException 
     {
-        checkWeb(1);
+        checkWeb(50,"http://api.openweathermap.org/data/2.5/weather?q=");
     }
     
     private static int getTotalMinutes()
@@ -48,7 +50,7 @@ public class ICS414_Weather {
         return totalMinutes;
     }
         
-    private static int checkWeb(int checkEveryXMinutes) throws SQLException
+    private static int checkWeb(int checkEveryXMinutes,String URL) throws SQLException, IOException
     {
      int initialTimeMin = getTotalMinutes();
      int count = 0;
@@ -61,14 +63,16 @@ public class ICS414_Weather {
         }
         if(SysTimeMin == initialTimeMin + (checkEveryXMinutes * count) )
         {
-            DatabaseOperations conn = new DatabaseOperations("414_weather","root","");
             String[] cities = getCitiesArray();//I thought about reading this in from a file, 
                                                //using a class I made, but there's not that
                                                //many cities and it saves overhead
-            for(String city: cities)
+            for(int i = 0; i < cities.length;i++)
             {
-                city = "\""+city+"\"";
-                addCity(city, conn);
+                String city = cities[i];
+                String test = getURLSource(URL+city+"&appid=2de143494c0b295cca9337e1e96b00e0");
+                String[] weather = parseJson(test, city);
+                values[i] = Integer.parseInt(weather[3]);
+                System.out.println(values[i]);
             }
             count++;
             while(SysTimeMin == getTotalMinutes());
@@ -96,28 +100,6 @@ public class ICS414_Weather {
                            "Schofield-Barracks","Volcano","Wahiawa","Waialua","Waianae","Waikoloa",
                            "Wailuku","Waimanalo","Waimea","Waipahu","Wake-Island","Wheeler-Army-Airfield"};
           return cities;
-        
-    }
-    private static int addCity(String city, DatabaseOperations conn)
-    {
-        String[] weather = null;
-        try
-        {
-            String test = getURLSource("http://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=2de143494c0b295cca9337e1e96b00e0");
-            weather = parseJson(test, city);
-            String[] columnNames1 = {"city_name","main_weather_cond","weather_description","id",
-                                     "temp_kelvin","humidity","wind_speed","wind_degree_angle",
-                                     "percent_cloudy","sunrise_time_utc","sunset_time_utc"};
-            String[] columnNames2 = {"city_name"};
-            String[] cityName = {city};
-            conn.UpdateTable("weather_by_city", columnNames1, weather,columnNames2,cityName);
-        }
-        catch(IOException|SQLException e)
-        {
-            System.out.println("City: "+city+" failed");
-            e.printStackTrace();
-        }
-        return Integer.parseInt(weather[3]);
         
     }
     
