@@ -20,7 +20,11 @@ import KLibrary.DatabaseOperations;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static java.lang.Math.floor;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -29,19 +33,52 @@ import java.sql.SQLException;
  */
 public class ICS414_Weather {
     public static int index = 0;
+    public static int countOutside = 0;
+    public static int[] values = new int[92];
+    
     public static void main(String[] args) throws MalformedURLException, IOException, SQLException 
     {
-       DatabaseOperations conn = new DatabaseOperations("414_weather","root","");
-       String[] cities = getCitiesArray();//I thought about reading this in from a file, 
-                                          //using a class I made, but there's not that
-                                          //many cities and it saves overhead
-       for(String city: cities)
-       {
-           addCity(city, conn);
-       }
-       
-       
+        checkWeb(50);
     }
+    
+    private static int getTotalMinutes()
+    {
+        Calendar calendar = Calendar.getInstance();
+        int hours = calendar.get(Calendar.HOUR_OF_DAY);
+        int minutes = calendar.get(Calendar.MINUTE);
+        int totalMinutes = (hours *60) + minutes;
+        return totalMinutes;
+    }
+        
+    private static int checkWeb(int checkEveryXMinutes) throws SQLException
+    {
+     int initialTimeMin = getTotalMinutes();
+     int count = 0;
+      while(true)
+       {
+        int SysTimeMin = getTotalMinutes();
+        if(SysTimeMin == 0)
+        {
+            initialTimeMin = 0;//When it's a new day it resets
+        }
+        if(SysTimeMin == initialTimeMin + (checkEveryXMinutes * count) )
+        {
+            DatabaseOperations conn = new DatabaseOperations("414_weather","root","");
+            String[] cities = getCitiesArray();//I thought about reading this in from a file, 
+                                               //using a class I made, but there's not that
+                                               //many cities and it saves overhead
+            for(String city: cities)
+            {
+                city = "\""+city+"\"";
+                addCity(city, conn);
+            }
+            count++;
+            while(SysTimeMin == getTotalMinutes());
+            
+       } 
+       }
+    }
+    
 //take array and add elements to database
     //It's too messy to put in the main method, so I seperated it out
     private static String [] getCitiesArray()
@@ -63,22 +100,26 @@ public class ICS414_Weather {
           return cities;
         
     }
-    private static void addCity(String city, DatabaseOperations conn)
+    private static int addCity(String city, DatabaseOperations conn)
     {
+        String[] weather = null;
         try
         {
             String test = getURLSource("http://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=2de143494c0b295cca9337e1e96b00e0");
-            String[] weather = parseJson(test, city);
-            String[] columnNames = {"city_name","main_weather_cond","weather_description","id",
+            weather = parseJson(test, city);
+            String[] columnNames1 = {"city_name","main_weather_cond","weather_description","id",
                                      "temp_kelvin","humidity","wind_speed","wind_degree_angle",
                                      "percent_cloudy","sunrise_time_utc","sunset_time_utc"};
-            conn.InsertInToTable("weather_by_city", columnNames, weather);
+            String[] columnNames2 = {"city_name"};
+            String[] cityName = {city};
+            conn.UpdateTable("weather_by_city", columnNames1, weather,columnNames2,cityName);
         }
         catch(IOException|SQLException e)
         {
             System.out.println("City: "+city+" failed");
             e.printStackTrace();
         }
+        return Integer.parseInt(weather[3]);
         
     }
     
@@ -100,6 +141,17 @@ public class ICS414_Weather {
         weatherData[2] = rootW.path("description").toString();
         weatherData[3] = rootW.path("icon").toString();
         weatherData[3] = weatherData[3].substring(1, 3);//for id conversion
+        
+        System.out.println(Integer.parseInt(weatherData[3]));
+        values[countOutside] = Integer.parseInt(weatherData[3]);
+        if(countOutside < 91)
+        {
+            countOutside++;
+        }
+        else
+        {
+            countOutside = 0;
+        }
         
         weatherData[4] = root.path("main").path("temp").toString();
         weatherData[5] = root.path("main").path("humidity").toString();

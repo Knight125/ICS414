@@ -83,8 +83,26 @@ public class DatabaseOperations
         }
         query = query.substring(0,query.length()-1) + " ; ";
         
-        System.out.println(query);
         myStat.executeUpdate(query);
                 
+    }
+    
+    public void UpdateTable(String tableName,String[] colNames1, String[] values1, 
+            String[] colNames2, String[] values2)
+            throws SQLException 
+    {
+        String query = "UPDATE `"+tableName+"` SET ";
+        for (int i = 0; i < colNames1.length;i++)
+        {
+            query = query + colNames1[i] + " = "+values1[i]+" ,";
+        }
+        query = query.substring(0,query.length()-1) + " WHERE ";
+        for (int i = 0; i < colNames2.length;i++)
+        {
+            query = query + colNames2[i] + " = "+values2[i]+" ,";
+        }
+        
+        query = query.substring(0,query.length()-1) + ";";
+        myStat.executeUpdate(query);
     }
 }
