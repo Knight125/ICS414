@@ -38,7 +38,7 @@ public class NonDatabaseVersion {
     
     public static void main(String[] args) throws MalformedURLException, IOException, SQLException 
     {
-        checkWeb(50,"http://api.openweathermap.org/data/2.5/weather?q=");
+        checkWeb(50,"http://api.openweathermap.org/data/2.5/weather?q=",1, 50);
     }
     
     private static int getTotalMinutes()
@@ -50,7 +50,7 @@ public class NonDatabaseVersion {
         return totalMinutes;
     }
         
-    private static int checkWeb(int checkEveryXMinutes,String URL) throws SQLException, IOException
+    private static void checkWeb(int checkEveryXMinutes,String URL, int start, int end) throws SQLException, IOException
     {
      int initialTimeMin = getTotalMinutes();
      int count = 0;
@@ -72,6 +72,10 @@ public class NonDatabaseVersion {
                 String test = getURLSource(URL+city+"&appid=2de143494c0b295cca9337e1e96b00e0");
                 String[] weather = parseJson(test, city);
                 values[i] = Integer.parseInt(weather[3]);
+                if((values[i] < start)|| values[i]> end)
+                {
+                    values[i] = 1;
+                }
                 System.out.println(values[i]);
             }
             count++;
