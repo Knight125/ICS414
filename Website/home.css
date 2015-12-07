@@ -1,0 +1,25 @@
+body {
+  font-family: Helvetica;
+  font-size: 12px;
+  text-align: center;
+}
+
+h1 {
+  font: italic small-caps bold 60px Helvetica;
+  letter-spacing: -5px;
+  line-height: 0.01;
+  text-align: center;
+}
+
+h2 {
+  font: small-caps bold 20px Helvetica;
+  line-height: 0.1;
+  text-align: center;
+}
+
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
