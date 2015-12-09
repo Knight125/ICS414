@@ -172,7 +172,7 @@ EOT;
 EOT;
      break;
 
-     default:
+     case 11:
         $html .=<<<EOT
            <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
            <script src="storm.js"></script>
@@ -182,15 +182,110 @@ EOT;
                </style>
            </head>
            <body>
-               <canvas id="can"></canvas><h1>
+           <div style="position:relative;width:800px;height:800px">
+           <form action="get-data.php" method="post">
+                    <input type="text" placeholder="city name" name="city" style="position:absolute;left:500px;top:100px;width:309px;"><br>
+                    <input type="submit" value ="See Weather" style="position:absolute;left:505px;top:200px;width:309px;">
+                  </form>
+
 EOT;
-        $html .= $weather.$temp;
+        $html .= $weather.$temp.'<canvas id="can" width="800" height="800"></canvas><h1 style="position:absolute;left:505px;top:50px;width:309px;">';
 
         break;
+     case 13:
+      $html .='<link rel="stylesheet" href="snow.css"></head><body><div id="snow"></div><center><h1>'.$weather.$temp;
+      $html .=<<<EOT
+      </h1><form action="get-data.php" method="post">
+                         <input type="text" placeholder="city name" name="city"><br>
+                         <input type="submit" value ="See Weather">
+                       </form></center>
+EOT;
+
+     break;
+
+     default:
+     $html .=<<<EOT
+   <!DOCTYPE html>
+   <html >
+     <head>
+       <meta charset="UTF-8">
+       <title>PARTICLE FOG GENERATOR</title>
+
+
+
+
+           <style>
+         /* NOTE: The styles were added inline because Prefixfree needs access to your styles and they must be inlined if they are on local disk! */
+         #myCanvas {
+     height: 200px;
+     width: 1600px;
+     max-width: 99%;
+     min-width: 800px;
+     position: absolute;
+     bottom: 0;
+   }
+
+   body {
+     background: black url(http://s.cdpn.io/16327/texture_bg.jpg) no-repeat 50% 0px;
+   }
+
+   div {
+     font-family: 'Exo 2', sans-serif;
+     font-size: 24px;
+     text-align: center;
+     color: white;
+     position: absolute;
+     height: 100px;
+     width: 200px;
+     top: 50%;
+     left: 50%;
+     margin-top: -50px;
+     margin-left: -100px;
+   }
+
+   div p {
+     font-size: 15px;
+   }
+
+       </style>
+
+
+           <script src="js/prefixfree.min.js"></script>
+
+
+     </head>
+
+     <body>
+
+       <!-- just for fonts-->
+   <link href='http://fonts.googleapis.com/css?family=Exo+2:400,800' rel='stylesheet' type='text/css'>
+
+   <!-- title --><h1><center>
+EOT;
+$html .= $weather.$temp;
+$html .=<<<EOT
+</h1><form action="get-data.php" method="post">
+                         <input type="text" placeholder="city name" name="city" ><br>
+                         <input type="submit" value ="See Weather">
+                       </form></center>
+
+
+
+   <!-- canvas stretches along the bottom -->
+   <canvas id="myCanvas" height="200" width="800"></canvas>
+       <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+           <script src="mist.js"></script>
+     </body>
+   </html>
+
+EOT;
+
+     break;
 
 }
 $html.=<<<EOT
-             </h1></body>
+             </body>
              </html>
 
 EOT;
