@@ -160,9 +160,9 @@ overflow:hidden;}
         <script src="showerrain
 EOT;
      if($id == 9)
-     {$html .= '.js"></script><center><h1>';}
-     else
      {$html .= '2.js"></script><center><h1>';}
+     else
+     {$html .= '.js"></script><center><h1>';}
      $html .= $weather.$temp;
      $html .= <<<EOT
        </h1><form action="get-data.php" method="post">
