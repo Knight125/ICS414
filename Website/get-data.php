@@ -193,7 +193,7 @@ EOT;
 
         break;
      case 13:
-      $html .='<link rel="stylesheet" href="snow.css"></head><body><div id="snow"></div><center><h1>'.$weather.$temp;
+      $html .='<link rel="stylesheet" href="snow.css"></head><body><center><h1>'.$weather.$temp;
       $html .=<<<EOT
       </h1><form action="get-data.php" method="post">
                          <input type="text" placeholder="city name" name="city"><br>
