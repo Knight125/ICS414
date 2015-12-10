@@ -143,7 +143,7 @@ public class ICS414_Weather {
         weatherData[4] = root.path("main").path("temp").toString();
         weatherData[5] = root.path("main").path("humidity").toString();
         weatherData[6] = root.path("wind").path("speed").toString();
-        weatherData[7] = root.path("wind").path("deg").toString();
+        weatherData[7] = "0";
         weatherData[8] = root.path("clouds").path("all").toString();
         weatherData[9] = root.path("sys").path("sunrise").toString();
         weatherData[10] = root.path("sys").path("sunset").toString();

@@ -182,14 +182,17 @@ EOT;
                </style>
            </head>
            <body>
-           <div style="position:relative;width:800px;height:800px">
-           <form action="get-data.php" method="post">
+           <div style="position:relative;width:1400px;height:800px"><center><h1 style="position:absolute;left:270px;top:0px;width:800px;">
+EOT;
+$html .= $weather.$temp;
+$html .=<<<EOT
+           </h1></center><form action="get-data.php" method="post">
                     <input type="text" placeholder="city name" name="city" style="position:absolute;left:500px;top:100px;width:309px;"><br>
                     <input type="submit" value ="See Weather" style="position:absolute;left:505px;top:200px;width:309px;">
                   </form>
 
 EOT;
-        $html .= $weather.$temp.'<canvas id="can" width="800" height="800"></canvas><h1 style="position:absolute;left:505px;top:50px;width:309px;">';
+        $html .='<canvas id="can" width="800" height="800"></canvas><h1 style="position:absolute;left:505px;top:50px;width:309px;">';
 
         break;
      case 13:
